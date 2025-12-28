@@ -120,6 +120,7 @@ const StyledHighlight = styled.div`
     height: 2px;
     margin-left: 50px;
     transform: translateX(calc(${({ $activeTabId }) => $activeTabId} * var(--tab-width)));
+    display: none;
   }
   @media (max-width: 480px) {
     margin-left: 25px;
@@ -190,8 +191,9 @@ const Jobs = () => {
   const jobsData = data.jobs.edges;
 
   const [activeTabId, setActiveTabId] = useState(0);
-  const [tabFocus, setTabFocus] = useState(null);
+  const [tabFocus, setTabFocus] = useState(0);
   const tabs = useRef([]);
+  const panels = useRef([]);
   const revealContainer = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -203,9 +205,14 @@ const Jobs = () => {
     sr.reveal(revealContainer.current, srConfig());
   }, []);
 
+  useEffect(() => {
+    tabs.current = jobsData.map(() => React.createRef());
+    panels.current = jobsData.map(() => React.createRef());
+  }, [jobsData.length]);
+
   const focusTab = () => {
-    if (tabs.current[tabFocus]) {
-      tabs.current[tabFocus].focus();
+    if (tabs.current[tabFocus] && tabs.current[tabFocus].current) {
+      tabs.current[tabFocus].current.focus();
       return;
     }
     // If we're at the end, go to the start
@@ -256,7 +263,7 @@ const Jobs = () => {
                   key={i}
                   $isActive={activeTabId === i}
                   onClick={() => setActiveTabId(i)}
-                  ref={el => (tabs.current[i] = el)}
+                  ref={tabs.current[i]}
                   id={`tab-${i}`}
                   role="tab"
                   tabIndex={activeTabId === i ? '0' : '-1'}
@@ -276,8 +283,9 @@ const Jobs = () => {
               const { title, url, company, range } = frontmatter;
 
               return (
-                <CSSTransition key={i} in={activeTabId === i} timeout={250} classNames="fade">
+                <CSSTransition key={i} in={activeTabId === i} timeout={250} classNames="fade" nodeRef={panels.current[i]} unmountOnExit>
                   <StyledTabPanel
+                    ref={panels.current[i]}
                     id={`panel-${i}`}
                     role="tabpanel"
                     tabIndex={activeTabId === i ? '0' : '-1'}

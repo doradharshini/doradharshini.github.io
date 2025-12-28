@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled from 'styled-components';
 import { navDelay, loaderDelay } from '@utils';
@@ -49,16 +49,6 @@ const StyledHeroSection = styled.section`
 const Hero = () => {
   const [isMounted, setIsMounted] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    const timeout = setTimeout(() => setIsMounted(true), navDelay);
-    return () => clearTimeout(timeout);
-  }, []);
-
   const one = <h1>Hi, my name is</h1>;
   const two = <h2 className="big-heading">Dora Dharshini</h2>;
   const three = <h3 className="medium-heading">I build things for the cloud.</h3>;
@@ -81,6 +71,18 @@ const Hero = () => {
 
   const items = [one, two, three, four, five];
 
+  const itemRefs = useRef(items.map(() => React.createRef()));
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const timeout = setTimeout(() => setIsMounted(true), navDelay);
+    return () => clearTimeout(timeout);
+  }, []);
+
+
   return (
     <StyledHeroSection>
       {prefersReducedMotion ? (
@@ -93,8 +95,10 @@ const Hero = () => {
         <TransitionGroup component={null}>
           {isMounted &&
             items.map((item, i) => (
-              <CSSTransition key={i} classNames="fadeup" timeout={loaderDelay}>
-                <div style={{ transitionDelay: `${i * 25}ms` }}>{item}</div>
+              <CSSTransition key={i} nodeRef={itemRefs.current[i]} classNames="fadeup" timeout={loaderDelay}>
+                <div ref={itemRefs.current[i]} style={{ transitionDelay: `${i * 25}ms` }}>
+                  {item}
+                </div>
               </CSSTransition>
             ))}
         </TransitionGroup>

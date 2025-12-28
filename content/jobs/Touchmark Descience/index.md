@@ -2,7 +2,7 @@
 date: '2024-02-01'
 title: 'R&D Intern'
 description: 'Created Power BI dashboards for insights, KPIs, trends supporting decisions'
-company: 'Touchmark Descience Pvt. Ltd'
+company: 'Touchmark Descience'
 location: 'Chennai, TN'
 range: 'Feb 2024 - Jun 2024'
 url: 'https://touchmarkdes.com/'

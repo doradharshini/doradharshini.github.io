@@ -132,8 +132,6 @@ const StyledProject = styled.li`
     }
 
     @media (max-width: 768px) {
-      color: var(--white);
-
       a {
         position: static;
 
