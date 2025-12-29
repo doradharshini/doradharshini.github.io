@@ -65,7 +65,7 @@ const Hero = () => {
       href="mailto:doradharshini.d@gmail.com"
       target="_blank"
       rel="noreferrer">
-      Get In Touch
+      Say Hello!
     </a>
   );
 
